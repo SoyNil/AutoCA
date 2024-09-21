@@ -495,8 +495,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $contenido_dxf .= "0\nTEXT\n8\n0\n10\n" . ($baseTabla - 1.7 - $base) . "\n20\n" . ($alturaTabla - 2.1 - $altura) . "\n40\n0.1\n1\n1 3/8∅: 1@0.05, 10@0.10,\n";
     $contenido_dxf .= "0\nTEXT\n8\n0\n10\n" . ($baseTabla - 1.3 - $base) . "\n20\n" . ($alturaTabla - 2.3 - $altura) . "\n40\n0.1\n1\nRst. @0.20 C/E\n";
 
-// Definir el espacio adicional hacia abajo
-$espacioAdicional = 1; // Ajusta este valor según tus necesidades
+
+// Definir el espacio adicional hacia abajo en función de la altura del cuadrado
+/*$espacioAdicional = $altura+0.3; // Ajusta este valor según tus necesidades
 
 // Nuevas dimensiones para el contorno extendido
 $alturaTablaExtendida = $alturaTabla + $espacioAdicional;
@@ -526,8 +527,8 @@ $contenido_dxf .= "62\n1\n"; // Establecer el color rojo
 $verticestablaExtendida = array(
     array(0, 0),
     array($baseTabla, 0),
-    array($baseTabla, -$espacioAdicional), // Extender hacia abajo
-    array(0, -$espacioAdicional), // Extender hacia abajo
+    array($baseTabla, - $espacioAdicional), // Extender hacia abajo
+    array(0, - $espacioAdicional), // Extender hacia abajo
     array(0, 0), // Cierre la polilínea volviendo al punto inicial
 );
 foreach ($verticestablaExtendida as $vertex) {
@@ -540,9 +541,195 @@ $contenido_dxf .= "0\nSEQEND\n"; // Finalizar la polilínea extendida
 // Agregar una línea vertical de división
 $contenido_dxf .= "0\nLINE\n8\n0\n";
 $contenido_dxf .= "62\n1\n"; // Establecer el color rojo
-// Coordenadas de la línea vertical (ajusta el valor x según sea necesario)
-$contenido_dxf .= "10\n" . (2) . "\n20\n0\n11\n" . (2) . "\n21\n-" . $espacioAdicional . "\n"; // Línea vertical en el centro del nuevo rectángulo
+$contenido_dxf .= "10\n" . (2) . "\n20\n0\n11\n" . (2) . "\n21\n-" . ( $espacioAdicional) . "\n"; // Línea vertical en el centro del nuevo rectángulo
 
+$radio = 0.02;  // Radio de redondeo (empalme)
+
+// Nuevas dimensiones
+$nuevaBase = $base;
+$nuevaAltura = $altura;
+
+// Coordenadas de los puntos principales
+$p1 = array(3.08, 0.04-$nuevaAltura); // Esquina superior/inf izquierda
+$p2 = array($nuevaBase+2.92, 0.04-$nuevaAltura); // Esquina superior/inf derecha
+$p3 = array($nuevaBase+2.92, -0.12); // Esquina inferior/sup derecha
+$p4 = array(3.08, -0.12); // Esquina inferior/sup izquierda
+
+// Dibuja las líneas entre los puntos, ajustando para el redondeo
+// Línea desde P1 a P2
+$contenido_dxf .= "0\nLINE\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . ($p1[0] + $radio) . "\n20\n" . $p1[1] . "\n";
+$contenido_dxf .= "11\n" . ($p2[0] - $radio) . "\n21\n" . $p2[1] . "\n";
+
+// Línea desde P2 a P3
+$contenido_dxf .= "0\nLINE\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . $p2[0] . "\n20\n" . ($p2[1] + $radio) . "\n";
+$contenido_dxf .= "11\n" . $p3[0] . "\n21\n" . ($p3[1] - $radio) . "\n";
+
+// Línea desde P3 a P4
+$contenido_dxf .= "0\nLINE\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . ($p3[0] - $radio) . "\n20\n" . $p3[1] . "\n";
+$contenido_dxf .= "11\n" . ($p4[0] + $radio) . "\n21\n" . $p4[1] . "\n";
+
+// Línea desde P4 a P1
+$contenido_dxf .= "0\nLINE\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . $p4[0] . "\n20\n" . ($p4[1] - $radio) . "\n";
+$contenido_dxf .= "11\n" . $p1[0] . "\n21\n" . ($p1[1] + $radio) . "\n";
+
+// Añadir arcos para las esquinas redondeadas
+// Arco entre P1 y P2 (esquina superior izquierda)
+$contenido_dxf .= "0\nARC\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . ($p1[0] + $radio) . "\n20\n" . ($p1[1] + $radio) . "\n";  // Centro del arco
+$contenido_dxf .= "40\n" . $radio . "\n";  // Radio del arco
+$contenido_dxf .= "50\n180\n51\n270\n"; // Ángulo inicial y final del arco (en grados)
+
+// Arco entre P2 y P3 (esquina superior derecha)
+$contenido_dxf .= "0\nARC\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . ($p2[0] - $radio) . "\n20\n" . ($p2[1] + $radio) . "\n";  // Centro del arco
+$contenido_dxf .= "40\n" . $radio . "\n";
+$contenido_dxf .= "50\n270\n51\n0\n"; // Ángulo inicial y final
+
+// Arco entre P3 y P4 (esquina inferior derecha)
+$contenido_dxf .= "0\nARC\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . ($p3[0] - $radio) . "\n20\n" . ($p3[1] - $radio) . "\n";
+$contenido_dxf .= "40\n" . $radio . "\n";
+$contenido_dxf .= "50\n0\n51\n90\n"; // Ángulo inicial y final
+
+// Arco entre P4 y P1 (esquina inferior izquierda)
+$contenido_dxf .= "0\nARC\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . ($p4[0] + $radio) . "\n20\n" . ($p4[1] - $radio) . "\n";
+$contenido_dxf .= "40\n" . $radio . "\n";
+$contenido_dxf .= "50\n90\n51\n180\n"; // Ángulo inicial y final
+
+$radio = 0.02;  // Radio de redondeo (empalme)
+
+// Nuevas dimensiones
+$nuevaBase = $base;
+$nuevaAltura = $altura;
+
+// Coordenadas de los puntos principales
+$p1 = array(3.10, 0.06-$nuevaAltura); // Esquina superior/inf izquierda
+$p2 = array($nuevaBase+2.90, 0.06-$nuevaAltura); // Esquina superior/inf derecha
+$p3 = array($nuevaBase+2.90, -0.14); // Esquina inferior/sup derecha
+$p4 = array(3.10, -0.14); // Esquina inferior/sup izquierda
+
+// Dibuja las líneas entre los puntos, ajustando para el redondeo
+// Línea desde P1 a P2
+$contenido_dxf .= "0\nLINE\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . ($p1[0] + $radio) . "\n20\n" . $p1[1] . "\n";
+$contenido_dxf .= "11\n" . ($p2[0] - $radio) . "\n21\n" . $p2[1] . "\n";
+
+// Línea desde P2 a P3
+$contenido_dxf .= "0\nLINE\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . $p2[0] . "\n20\n" . ($p2[1] + $radio) . "\n";
+$contenido_dxf .= "11\n" . $p3[0] . "\n21\n" . ($p3[1] - $radio) . "\n";
+
+// Línea desde P3 a P4
+$contenido_dxf .= "0\nLINE\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . ($p3[0] - $radio) . "\n20\n" . $p3[1] . "\n";
+$contenido_dxf .= "11\n" . ($p4[0] + $radio) . "\n21\n" . $p4[1] . "\n";
+
+// Línea desde P4 a P1
+$contenido_dxf .= "0\nLINE\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . $p4[0] . "\n20\n" . ($p4[1] - $radio) . "\n";
+$contenido_dxf .= "11\n" . $p1[0] . "\n21\n" . ($p1[1] + $radio) . "\n";
+
+// Añadir arcos para las esquinas redondeadas
+// Arco entre P1 y P2 (esquina superior izquierda)
+$contenido_dxf .= "0\nARC\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . ($p1[0] + $radio) . "\n20\n" . ($p1[1] + $radio) . "\n";  // Centro del arco
+$contenido_dxf .= "40\n" . $radio . "\n";  // Radio del arco
+$contenido_dxf .= "50\n180\n51\n270\n"; // Ángulo inicial y final del arco (en grados)
+
+// Arco entre P2 y P3 (esquina superior derecha)
+$contenido_dxf .= "0\nARC\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . ($p2[0] - $radio) . "\n20\n" . ($p2[1] + $radio) . "\n";  // Centro del arco
+$contenido_dxf .= "40\n" . $radio . "\n";
+$contenido_dxf .= "50\n270\n51\n0\n"; // Ángulo inicial y final
+
+// Arco entre P3 y P4 (esquina inferior derecha)
+$contenido_dxf .= "0\nARC\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . ($p3[0] - $radio) . "\n20\n" . ($p3[1] - $radio) . "\n";
+$contenido_dxf .= "40\n" . $radio . "\n";
+$contenido_dxf .= "50\n0\n51\n90\n"; // Ángulo inicial y final
+
+// Arco entre P4 y P1 (esquina inferior izquierda)
+$contenido_dxf .= "0\nARC\n8\n0\n62\n3\n";  // Color verde
+$contenido_dxf .= "10\n" . ($p4[0] + $radio) . "\n20\n" . ($p4[1] - $radio) . "\n";
+$contenido_dxf .= "40\n" . $radio . "\n";
+$contenido_dxf .= "50\n90\n51\n180\n"; // Ángulo inicial y final
+
+//GANCHO ESTRIBO//}
+
+// Definir los vértices del gancho de estribo externo
+$vertices_gancho_izquierdo = array(
+    array($p1[0] + 0.2, $p1[1] + 1.08),
+    array($p3[0] - 0.16, $p3[1] + 1.12),
+);
+
+$vertices_gancho_derecho = array(
+    array($p2[0] + 0.2, $p2[1] + 1.08),
+    array($p3[0] - 0.16, $p3[1] + 1.12),
+);
+
+// Agregar líneas para el gancho de estribos izquierdo
+foreach ($vertices_gancho_izquierdo as $i => $vertex) {
+    $x1 = $vertex[0];
+    $y1 = $vertex[1];
+    $x2 = $vertices_gancho_izquierdo[($i + 1) % count($vertices_gancho_izquierdo)][0];
+    $y2 = $vertices_gancho_izquierdo[($i + 1) % count($vertices_gancho_izquierdo)][1];
+
+    $contenido_dxf .= "0\nLINE\n8\n0\n10\n$x1\n20\n$y1\n11\n$x2\n21\n$y2\n";
+    $contenido_dxf .= "62\n3\n"; // Establecer el color verde
+}
+
+// Agregar líneas para el gancho de estribos derecho
+foreach ($vertices_gancho_derecho as $i => $vertex) {
+    $x1 = $vertex[0];
+    $y1 = $vertex[1];
+    $x2 = $vertices_gancho_derecho[($i + 1) % count($vertices_gancho_derecho)][0];
+    $y2 = $vertices_gancho_derecho[($i + 1) % count($vertices_gancho_derecho)][1];
+
+    $contenido_dxf .= "0\nLINE\n8\n0\n10\n$x1\n20\n$y1\n11\n$x2\n21\n$y2\n";
+    $contenido_dxf .= "62\n3\n"; // Establecer el color verde
+}
+
+// Definir los vértices del gancho de estribo para el cuadrado interno
+$vertices_gancho_izquierdo = array(
+    array(3.10 + 0.05, 0.06 - $nuevaAltura + 0.05),
+    array(3.10 + 0.15, 0.06 - $nuevaAltura + 0.06),
+);
+
+$vertices_gancho_derecho = array(
+    array($nuevaBase + 2.90 - 0.05, 0.06 - $nuevaAltura + 0.05),
+    array($nuevaBase + 2.90 - 0.15, 0.06 - $nuevaAltura + 0.06),
+);
+
+// Agregar líneas para el gancho de estribos izquierdo
+foreach ($vertices_gancho_izquierdo as $i => $vertex) {
+    $x1 = $vertex[0];
+    $y1 = $vertex[1];
+    $x2 = $vertices_gancho_izquierdo[($i + 1) % count($vertices_gancho_izquierdo)][0];
+    $y2 = $vertices_gancho_izquierdo[($i + 1) % count($vertices_gancho_izquierdo)][1];
+
+    $contenido_dxf .= "0\nLINE\n8\n0\n10\n$x1\n20\n$y1\n11\n$x2\n21\n$y2\n";
+    $contenido_dxf .= "62\n3\n"; // Establecer el color verde
+}
+
+// Agregar líneas para el gancho de estribos derecho
+foreach ($vertices_gancho_derecho as $i => $vertex) {
+    $x1 = $vertex[0];
+    $y1 = $vertex[1];
+    $x2 = $vertices_gancho_derecho[($i + 1) % count($vertices_gancho_derecho)][0];
+    $y2 = $vertices_gancho_derecho[($i + 1) % count($vertices_gancho_derecho)][1];
+
+    $contenido_dxf .= "0\nLINE\n8\n0\n10\n$x1\n20\n$y1\n11\n$x2\n21\n$y2\n";
+    $contenido_dxf .= "62\n3\n"; // Establecer el color verde
+}*/
+
+
+$contenido_dxf .= "0\nTEXT\n8\n0\n10\n" . (0.5) . "\n20\n" . (-$espacioAdicional / 2) . "\n40\n0.1\n1\nDESPIECE DE\n";
+$contenido_dxf .= "0\nTEXT\n8\n0\n10\n" . (0.5) . "\n20\n" . ((-$espacioAdicional / 2) - 0.2) . "\n40\n0.1\n1\nESTRIBOS\n";
 
     $contenido_dxf .= "0\nPOLYLINE\n8\n0\n";
     $contenido_dxf .= "66\n1\n70\n8\n";
