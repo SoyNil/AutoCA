@@ -5,37 +5,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 // Obtener las dimensiones del formulario
 $cantidadColumnas = (int)$_POST["cantidadColumnas"];
-$columnasData = [];
-
+// Inicializar arrays para cada propiedad
+$baseArray = [];
+$alturaArray = [];
+$tipoAceroEsquinasArray = [];
+$cantidadXArray = [];
+$tipoAcerosAdicionalesXArray = [];
+$cantidadYArray = [];
+$tipoAcerosAdicionalesYArray = [];
 // Recoger los datos de cada columna
 for ($i = 0; $i < $cantidadColumnas; $i++) {
     $base = (float)$_POST["base"][$i] / $escala;
     $altura = (float)$_POST["altura"][$i] / $escala;
-    $Tipo_AceroEsquinas = (float)$_POST["tiposaceroEsquinas"][$i] / $escala;
+    $tipoAceroEsquinas = (float)$_POST["tiposaceroEsquinas"][$i] / $escala;
 
     $cantidadX = (int)$_POST["acerosX"][$i];    
-    $Tipo_AcerosadicionalesX = (float)$_POST["tipoaceroX"][$i] / $escala;
+    $tipoAcerosAdicionalesX = (float)$_POST["tipoaceroX"][$i] / $escala;
 
     $cantidadY = (int)$_POST["acerosY"][$i];    
-    $Tipo_AcerosadicionalesY = (float)$_POST["tipoaceroY"][$i] / $escala;
+    $tipoAcerosAdicionalesY = (float)$_POST["tipoaceroY"][$i] / $escala;
 
-    // Almacenar los datos de la columna en un array
-    $columnasData[] = [
-        'base' => $base,
-        'altura' => $altura,
-        'tipo_acero_esquinas' => $Tipo_AceroEsquinas,
-        'cantidadX' => $cantidadX,
-        'tipo_acero_X' => $Tipo_AcerosadicionalesX,
-        'cantidadY' => $cantidadY,
-        'tipo_acero_Y' => $Tipo_AcerosadicionalesY,
-    ];
+    // Almacenar los datos en los arrays correspondientes
+    $baseArray[] = $base;
+    $alturaArray[] = $altura;
+    $tipoAceroEsquinasArray[] = $tipoAceroEsquinas;
+    $cantidadXArray[] = $cantidadX;
+    $tipoAcerosAdicionalesXArray[] = $tipoAcerosAdicionalesX;
+    $cantidadYArray[] = $cantidadY;
+    $tipoAcerosAdicionalesYArray[] = $tipoAcerosAdicionalesY;
 }
-    $numPisosAdicionales = (int)$_POST["cantidadPisos"];
+// Visualizar los arrays
+echo "<pre>"; // Formatear la salida
+print_r($baseArray);
+print_r($alturaArray);
+print_r($tipoAceroEsquinasArray);
+print_r($cantidadXArray);
+print_r($tipoAcerosAdicionalesXArray);
+print_r($cantidadYArray);
+print_r($tipoAcerosAdicionalesYArray);
+echo "</pre>";
+    
 
+    $numPisosAdicionales = (int)$_POST["cantidadPisos"];
     $contenido_dxf = "";
     $contenido_dxf .= "0\nSTYLE\n2\nArialStyle\n3\nVista/arial.ttf\n70\n0\n40\n1.0\n41\n1.0\n50\n0\n71\n0\n42\n1.0\n";
     
-    $contenido_dxf = "0\nSECTION\n2\nENTITIES\n";
+    // Acceder al primer elemento de cada array
+    $base = $baseArray[0]; // 10
+    $altura = $alturaArray[0]; // 5
+    $base2 = $baseArray[0]; // 10
+    $altura2 = $alturaArray[0]; // 5
+    $contenido_dxf .= "0\nSECTION\n2\nENTITIES\n";
     $contenido_dxf .= "0\nPOLYLINE\n8\n0\n";
     $contenido_dxf .= "66\n1\n70\n8\n";
     $contenido_dxf .= "62\n5\n";
@@ -51,7 +71,7 @@ for ($i = 0; $i < $cantidadColumnas; $i++) {
         $y = $vertex[1];
         $contenido_dxf .= "0\nVERTEX\n8\n0\n10\n$x\n20\n$y\n";
     }
-    $contenido_dxf .= "0\nSEQEND\n";
+    $contenido_dxf .= "0\nSEQEND\n";    
     //Cuadrado Exterior
     $contenido_dxf .= "0\nLINE\n8\n0\n";
     $contenido_dxf .= "62\n8\n";
@@ -151,6 +171,8 @@ for ($i = 0; $i < $cantidadColumnas; $i++) {
         array(3.10, $altura + 1.1),
         array(3.10, 1.30),
     );
+    $Tipo_AcerosadicionalesX = $tipoAcerosAdicionalesXArray[0]; // 10
+    $Tipo_AcerosadicionalesY = $tipoAcerosAdicionalesYArray[0]; // 5
     $radio_x = $Tipo_AcerosadicionalesX*$escala;
     $radio_y = $Tipo_AcerosadicionalesY*$escala;
     //GANCHO ESTRIBO//}
@@ -217,6 +239,7 @@ for ($i = 0; $i < $cantidadColumnas; $i++) {
     } elseif ($Tipo_AcerosadicionalesY == 0.0508/ $escala) {
         $numeracionesy = "(8)";
     }
+    $Tipo_AceroEsquinas = $tipoAceroEsquinasArray[0]; // 10
         // Convertidor de medidas para Tipo_AceroEsquinas
     if ($Tipo_AceroEsquinas == 0.0127/ $escala) {
         $Tipo_AceroEsquinasc = "1/4";
@@ -390,7 +413,9 @@ for ($i = 0; $i < $cantidadColumnas; $i++) {
     // TABLAS EXTERNAS INTERNAS//
 
     $baseTabla = $base + 4;
-    $alturaTabla = $altura + 2.5;
+    // Suponiendo que $alturaArray ya está definido y contiene los valores de altura
+$altura = max($alturaArray); // Obtener el valor máximo de altura
+$alturaTabla = $altura + 2.5; // Ahora $alturaTabla se basa en el valor máximo
  
     $contenido_dxf .= "0\nTEXT\n8\n0\n10\n" . ($baseTabla - 3.8 - $base) . "\n20\n" . ($alturaTabla - 0.3) . "\n40\n0.1\n1\nESCALA:\n";
     $contenido_dxf .= "0\nTEXT\n8\n0\n10\n" . ($baseTabla - 3.8 - $base) . "\n20\n" . ($alturaTabla - 0.5) . "\n40\n0.1\n1\n 1/$escala\n";
@@ -560,17 +585,46 @@ foreach ($verticestablaExtendida as $vertex) {
     $contenido_dxf .= "0\nVERTEX\n8\n0\n10\n$x\n20\n$y\n";
 }
 $contenido_dxf .= "0\nSEQEND\n"; // Finalizar la polilínea extendida
-
 // Agregar una línea vertical de división
 $contenido_dxf .= "0\nLINE\n8\n0\n";
 $contenido_dxf .= "62\n1\n"; // Establecer el color rojo
 $contenido_dxf .= "10\n" . (2) . "\n20\n0\n11\n" . (2) . "\n21\n-" . ( $espacioAdicional) . "\n"; // Línea vertical en el centro del nuevo rectángulo
 
+// Aquí empieza a agregar filas y columnas dependiendo de la cantidad de columnas
+$espacioAdicional = 5; // Espacio adicional que deseas agregar para cada columna nueva
+$offset = $baseTabla; // Desplazamiento inicial para las nuevas columnas
+$espacioAdicionaly1 = $altura+0.3;
+for ($i = 1; $i < $cantidadColumnas; $i++) { // Empezar desde 1 porque la columna 0 ya está
+    $offset += $espacioAdicional; // Aumentar el desplazamiento por cada nueva columna
+
+    // Agregar la línea vertical divisoria entre columnas
+    $contenido_dxf .= "0\nLINE\n8\n0\n10\n" . ($offset) . "\n20\n0\n11\n" . ($offset) . "\n21\n" . (-$espacioAdicionaly1) . "\n"; // Línea divisoria
+    $contenido_dxf .= "62\n1\n"; // Establecer el color rojo
+
+}
+// Finalizar polilínea de la tabla adicional (si es necesario)
+$contenido_dxf .= "0\nPOLYLINE\n8\n0\n";
+$contenido_dxf .= "66\n1\n70\n8\n";
+$contenido_dxf .= "62\n1\n"; // Color rojo
+$verticestabla = array(
+    array($baseTabla, 0), // Punto inicial de la nueva tabla
+    array($offset, 0), // Punto derecho
+    array($offset, -$espacioAdicionaly1), // Punto alto derecho
+    array($baseTabla, -$espacioAdicionaly1), // Punto alto izquierdo
+    array($baseTabla, 0), // Cierre la polilínea
+);
+foreach ($verticestabla as $vertex) {
+    $x = $vertex[0];
+    $y = $vertex[1];
+    $contenido_dxf .= "0\nVERTEX\n8\n0\n10\n$x\n20\n$y\n";
+}
+$contenido_dxf .= "0\nSEQEND\n"; // Finalizar la polilínea
+
     $radio = 0.02;  // Radio de redondeo (empalme)
 
     // Nuevas dimensiones
-    $nuevaBase = $base;
-    $nuevaAltura = $altura;
+    $nuevaBase = $base2;
+    $nuevaAltura = $altura2;
 
     // Coordenadas de los puntos principales
     $p1 = array(3.08, 0.04-$nuevaAltura); // Esquina inf izquierda
@@ -647,8 +701,8 @@ $contenido_dxf .= "10\n" . (2) . "\n20\n0\n11\n" . (2) . "\n21\n-" . ( $espacioA
 $radio = 0.02;  // Radio de redondeo (empalme)
 
 // Nuevas dimensiones
-$nuevaBase = $base;
-$nuevaAltura = $altura;
+$nuevaBase = $base2;
+$nuevaAltura = $altura2;
 
 // Coordenadas de los puntos principales
 $p1 = array(3.10, 0.06-$nuevaAltura); // Esquina superior/inf izquierda
@@ -769,8 +823,8 @@ $contenido_dxf .= "50\n90\n51\n180\n"; // Ángulo inicial y final
         $contenido_dxf .= "62\n3\n"; // Establecer el color verde
     }
 
-$contenido_dxf .= "0\nTEXT\n8\n0\n10\n" . (0.5) . "\n20\n" . (-$espacioAdicional / 2) . "\n40\n0.1\n1\nDESPIECE DE\n";
-$contenido_dxf .= "0\nTEXT\n8\n0\n10\n" . (0.5) . "\n20\n" . ((-$espacioAdicional / 2) - 0.2) . "\n40\n0.1\n1\nESTRIBOS\n";
+$contenido_dxf .= "0\nTEXT\n8\n0\n10\n" . (0.5) . "\n20\n" . (-$espacioAdicionaly1 / 2) . "\n40\n0.1\n1\nDESPIECE DE\n";
+$contenido_dxf .= "0\nTEXT\n8\n0\n10\n" . (0.5) . "\n20\n" . ((-$espacioAdicionaly1 / 2) - 0.2) . "\n40\n0.1\n1\nESTRIBOS\n";
 
 // Aquí empieza a agregar filas y columnas dependiendo de la cantidad de columnas
 $espacioAdicional = 5; // Espacio adicional que deseas agregar para cada columna nueva
@@ -779,21 +833,104 @@ $offset = $baseTabla; // Desplazamiento inicial para las nuevas columnas
 for ($i = 1; $i < $cantidadColumnas; $i++) { // Empezar desde 1 porque la columna 0 ya está
     $offset += $espacioAdicional; // Aumentar el desplazamiento por cada nueva columna
 
+    // Acceder a los valores de base y altura del array según el índice del bucle
+    $base1 = $baseArray[$i]; // Cambiar de 0 a $i
+    $altura1 = $alturaArray[$i]; // Cambiar de 0 a $i
+    $contenido_dxf .= "0\nPOLYLINE\n8\n0\n";
+    $contenido_dxf .= "66\n1\n70\n8\n";
+    $contenido_dxf .= "62\n5\n";
+    $vertices = array(
+        array($offset-4, 1.2),
+        array(($offset-4)+$base1, 1.2),
+        array(($offset-4)+$base1, 1.2+$altura1),
+        array($offset-4, 1.2+$altura1),
+        array($offset-4, 1.2),
+    );
+    foreach ($vertices as $vertex) {
+        $x = $vertex[0];
+        $y = $vertex[1];
+        $contenido_dxf .= "0\nVERTEX\n8\n0\n10\n$x\n20\n$y\n";
+    }
+    $contenido_dxf .= "0\nSEQEND\n";
+    //Cuadrado Exterior
+    $contenido_dxf .= "0\nLINE\n8\n0\n";
+    $contenido_dxf .= "62\n8\n";
+    $yOffset = -0.05;
+    $contenido_dxf .= "10\n".($offset-4)."\n20\n" . (1.2 + $yOffset) . "\n";
+    $contenido_dxf .= "11\n" . (($offset-4)+$base1) . "\n21\n" . (1.2 + $yOffset) . "\n";
+    $texBasex=($base1*$escala);
+    $contenido_dxf .= "0\nTEXT\n8\n0\n";
+    $contenido_dxf .= "10\n" . ($offset-4)+($base1/2) . "\n";
+    $contenido_dxf .= "20\n" . ((1.2 + $yOffset-0.05)-0.02) . "\n";
+    $contenido_dxf .= "40\n0.05\n";
+    $contenido_dxf .= "1\n$texBasex\n";
+    $contenido_dxf .= "0\nLINE\n8\n0\n";
+    $contenido_dxf .= "62\n8\n";
+    $xOffset = ($offset-4)+$base1+0.05;
+    $contenido_dxf .= "10\n" . ($xOffset) . "\n20\n1.2\n";
+    $contenido_dxf .= "11\n" . ($xOffset) . "\n21\n" . ($altura1 + 1.2) . "\n";
+    $texBasey=($altura1*$escala);
+    $contenido_dxf .= "0\nTEXT\n8\n0\n";
+    $contenido_dxf .= "10\n" . ($xOffset)+0.02 . "\n";
+    $contenido_dxf .= "20\n" . (($altura1 / 2) + 1.2) . "\n";
+    $contenido_dxf .= "40\n0.05\n";
+    $contenido_dxf .= "1\n$texBasey\n";
+    //CuadradoInteriorGrande
+    $radio = 0.02;
+    $p1 = array($offset-4.08, 1.28);
+    $p2 = array($base + 2.92, 1.28); 
+    $p3 = array($base + 2.92, $altura + 1.12);
+    $p4 = array(3.08, $altura + 1.12);
+    $contenido_dxf .= "0\nLINE\n8\n0\n62\n3\n";
+    $contenido_dxf .= "10\n" . ($p1[0] + $radio) . "\n20\n" . $p1[1] . "\n";
+    $contenido_dxf .= "11\n" . ($p2[0] - $radio) . "\n21\n" . $p2[1] . "\n";
+    $contenido_dxf .= "0\nLINE\n8\n0\n62\n3\n";
+    $contenido_dxf .= "10\n" . $p2[0] . "\n20\n" . ($p2[1] + $radio) . "\n";
+    $contenido_dxf .= "11\n" . $p3[0] . "\n21\n" . ($p3[1] - $radio) . "\n";
+    $contenido_dxf .= "0\nLINE\n8\n0\n62\n3\n";
+    $contenido_dxf .= "10\n" . ($p3[0] - $radio) . "\n20\n" . $p3[1] . "\n";
+    $contenido_dxf .= "11\n" . ($p4[0] + $radio) . "\n21\n" . $p4[1] . "\n";
+    $contenido_dxf .= "0\nLINE\n8\n0\n62\n3\n";
+    $contenido_dxf .= "10\n" . $p4[0] . "\n20\n" . ($p4[1] - $radio) . "\n";
+    $contenido_dxf .= "11\n" . $p1[0] . "\n21\n" . ($p1[1] + $radio) . "\n";
+    $contenido_dxf .= "0\nARC\n8\n0\n62\n3\n";
+    $contenido_dxf .= "10\n" . ($p1[0] + $radio) . "\n20\n" . ($p1[1] + $radio) . "\n";
+    $contenido_dxf .= "40\n" . $radio . "\n";
+    $contenido_dxf .= "50\n180\n51\n270\n";
+    $contenido_dxf .= "0\nARC\n8\n0\n62\n3\n";
+    $contenido_dxf .= "10\n" . ($p2[0] - $radio) . "\n20\n" . ($p2[1] + $radio) . "\n";
+    $contenido_dxf .= "40\n" . $radio . "\n";
+    $contenido_dxf .= "50\n270\n51\n0\n";
+    $contenido_dxf .= "0\nARC\n8\n0\n62\n3\n";
+    $contenido_dxf .= "10\n" . ($p3[0] - $radio) . "\n20\n" . ($p3[1] - $radio) . "\n";
+    $contenido_dxf .= "40\n" . $radio . "\n";
+    $contenido_dxf .= "50\n0\n51\n90\n";
+    $contenido_dxf .= "0\nARC\n8\n0\n62\n3\n";
+    $contenido_dxf .= "10\n" . ($p4[0] + $radio) . "\n20\n" . ($p4[1] - $radio) . "\n";
+    $contenido_dxf .= "40\n" . $radio . "\n";
+    $contenido_dxf .= "50\n90\n51\n180\n";
+
     // Aquí puedes agregar las nuevas filas y textos adicionales
-    $contenido_dxf .= "0\nTEXT\n8\n0\n10\n" . ($offset - 2) . "\n20\n" . ($alturaTabla - 0.4) . "\n40\n0.1\n1\nCUADRO DE COLUMNA " . ($i + 1) . "\n";
+    $contenido_dxf .= "0\nTEXT\n8\n0\n10\n" . ($offset - 3.6) . "\n20\n" . ($alturaTabla - 0.4) . "\n40\n0.1\n1\nCUADRO DE COLUMNA " . ($i + 1) . "\n";
+
+    // Aquí puedes agregar las nuevas filas y textos adicionales
+    $contenido_dxf .= "0\nTEXT\n8\n0\n10\n" . ($offset - 2.6) . "\n20\n" . ($alturaTabla - 0.8) . "\n40\n0.1\n1\nC" . ($i + 1) . "\n";    
 
     // Agregar la línea vertical en la parte superior
-    $contenido_dxf .= "0\nLINE\n8\n0\n10\n" . ($offset - 5) . "\n20\n" . ($alturaTabla-0.6) . "\n11\n" . ($offset ) . "\n21\n" . ($alturaTabla - 0.6) . "\n"; // Línea vertical
+    $contenido_dxf .= "0\nLINE\n8\n0\n10\n" . ($offset - 5) . "\n20\n" . ($alturaTabla - 0.6) . "\n11\n" . ($offset) . "\n21\n" . ($alturaTabla - 0.6) . "\n"; // Línea vertical
     $contenido_dxf .= "62\n1\n"; // Establecer el color rojo
+
+    // Agregar la línea vertical en la parte superior
+    $contenido_dxf .= "0\nLINE\n8\n0\n10\n" . ($offset - 5) . "\n20\n" . (1) . "\n11\n" . ($offset) . "\n21\n" . (1) . "\n"; // Línea vertical
+    $contenido_dxf .= "62\n1\n"; // Establecer el color rojo    
+
+    // Agregar la línea vertical en la parte superior
+    $contenido_dxf .= "0\nLINE\n8\n0\n10\n" . ($offset - 5) . "\n20\n" . ($alturaTabla - 1.1) . "\n11\n" . ($offset) . "\n21\n" . ($alturaTabla - 1.1) . "\n"; // Línea vertical
+    $contenido_dxf .= "62\n1\n"; // Establecer el color rojo    
 
     // Agregar la línea vertical divisoria entre columnas
     $contenido_dxf .= "0\nLINE\n8\n0\n10\n" . ($offset) . "\n20\n0\n11\n" . ($offset) . "\n21\n" . ($alturaTabla) . "\n"; // Línea divisoria
     $contenido_dxf .= "62\n1\n"; // Establecer el color rojo
-
-    // Agregar datos de cada nuevo piso adicional
-    for ($j = 1; $j <= $numPisosAdicionales; $j++) {
-        $contenido_dxf .= "0\nTEXT\n8\n0\n10\n" . ($offset - 3.8) . "\n20\n" . ($alturaTabla - 1.2 - ($j * $alturaPisoAdicional)) . "\n40\n0.1\n1\n" . ($j + 0) . "° PISO\n";
-    }
 }
 
 // Finalizar polilínea de la tabla adicional (si es necesario)
