@@ -5,27 +5,40 @@ body {
     padding: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
+    align-items: flex-start; /* Mantiene la alineación en la parte superior */
+    flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
+    min-height: 100vh; /* Asegura que haya suficiente altura en la ventana */
+    color: #555;
+    overflow: auto;
+    padding-top: 60px; /* Aumentar el espacio en la parte superior */
 }
+
 h2 {
     color: #333;
     margin-bottom: 20px;
+    font-size: 28px; /* Aumentar el tamaño del texto para mayor visibilidad */
+    text-align: center;
+    width: 100%;
+    padding: 0 20px; /* Añadir padding a los lados */
 }
+
 form {
     background: #fff;
-    padding: 20px;
+    padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 500px;
+    margin: 0 auto; /* Centra el formulario */
 }
+
 label {
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
     color: #333;
 }
+
 input[type="number"],
 select {
     width: calc(100% - 22px);
@@ -35,6 +48,7 @@ select {
     border-radius: 4px;
     font-size: 16px;
 }
+
 input[type="submit"] {
     background-color: #28a745;
     color: white;
@@ -45,6 +59,17 @@ input[type="submit"] {
     cursor: pointer;
     width: 100%;
 }
+
 input[type="submit"]:hover {
     background-color: #218838;
+}
+
+@media (max-width: 600px) {
+    form {
+        padding: 20px; /* Reduce el padding en pantallas pequeñas */
+    }
+
+    h2 {
+        font-size: 24px; /* Ajusta el tamaño del título en pantallas pequeñas */
+    }
 }

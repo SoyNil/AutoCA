@@ -5,54 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulario de Dimensiones</title>
     <link rel="stylesheet" href="Vista/estilos.css">
+    <script>
+        function mostrarInputs() {
+            const cantidadColumnas = document.getElementById("cantidadColumnas").value;
+            const contenedorColumnas = document.getElementById("contenedorColumnas");
+            contenedorColumnas.innerHTML = ""; // Limpiar contenido previo
+
+            for (let i = 0; i < cantidadColumnas; i++) {
+                contenedorColumnas.innerHTML += `
+                    <h3>Columna ${i + 1}</h3>
+                    <label for="base${i}">Base (mm):</label>
+                    <input type="number" id="base${i}" name="base[]" required><br><br>
+
+                    <label for="altura${i}">Altura (mm):</label>
+                    <input type="number" id="altura${i}" name="altura[]" required><br><br>
+
+                    <label for="tiposaceroEsquinas${i}">Tipo de Acero en Esquinas (mm):</label>
+                    <select id="tiposaceroEsquinas${i}" name="tiposaceroEsquinas[]" required>
+                        <option value="0.0127">0.0127 mm</option>
+                        <option value="0.019039999999999998">0.01904 mm</option>
+                        <option value="0.0254">0.0254 mm</option>
+                        <option value="0.03174">0.03174 mm</option>
+                        <option value="0.0381">0.0381 mm</option>
+                        <option value="0.0508">0.0508 mm</option>
+                    </select><br><br>
+
+                    <label for="acerosX${i}">Cantidad de Aceros en X:</label>
+                    <input type="number" id="acerosX${i}" name="acerosX[]" required><br><br>
+
+                    <label for="tipoaceroX${i}">Tipo de Acero adicional en X (mm):</label>
+                    <select id="tipoaceroX${i}" name="tipoaceroX[]" required>
+                        <option value="0.0127">0.0127 mm</option>
+                        <option value="0.019039999999999998">0.01904 mm</option>
+                        <option value="0.0254">0.0254 mm</option>
+                        <option value="0.03174">0.03174 mm</option>
+                        <option value="0.0381">0.0381 mm</option>
+                        <option value="0.0508">0.0508 mm</option>
+                    </select><br><br>
+
+                    <label for="acerosY${i}">Cantidad de Aceros en Y:</label>
+                    <input type="number" id="acerosY${i}" name="acerosY[]" required><br><br>
+
+                    <label for="tipoaceroY${i}">Tipo de Acero adicional en Y (mm):</label>
+                    <select id="tipoaceroY${i}" name="tipoaceroY[]" required>
+                        <option value="0.0127">0.0127 mm</option>
+                        <option value="0.019039999999999998">0.01904 mm</option>
+                        <option value="0.0254">0.0254 mm</option>
+                        <option value="0.03174">0.03174 mm</option>
+                        <option value="0.0381">0.0381 mm</option>
+                        <option value="0.0508">0.0508 mm</option>
+                    </select><br><br>
+                `;
+            }
+        }
+    </script>
 </head>
 <body>
     <h2>Enviar dimensiones</h2>
     <form action="Vista/procesar.php" method="POST">
         <label for="escala">Escala:</label>
         <input type="number" id="escala" name="escala" value="50" required><br><br>
+        <label for="cantidadColumnas">Cantidad de Columnas:</label>
+        <input type="number" id="cantidadColumnas" name="cantidadColumnas" min="1" step="1" required onchange="mostrarInputs()"><br><br>
 
-        <label for="base">Base (mm):</label>
-        <input type="number" id="base" name="base" required><br><br>
+        <div id="contenedorColumnas"></div>
 
-        <label for="altura">Altura (mm):</label>
-        <input type="number" id="altura" name="altura" required><br><br>
-
-        <label for="tiposaceroEsquinas">Tipo de Acero en Esquinas (mm):</label>
-        <select id="tiposaceroEsquinas" name="tiposaceroEsquinas" required>
-            <option value="0.0127">0.0127 mm</option>
-            <option value="0.019039999999999998">0.01904 mm</option>
-            <option value="0.0254">0.0254 mm</option>
-            <option value="0.03174">0.03174 mm</option>
-            <option value="0.0381">0.0381 mm</option>
-            <option value="0.0508">0.0508 mm</option>
-        </select><br><br>
-
-        <label for="acerosX">Cantidad de Aceros en X:</label>
-        <input type="number" id="acerosX" name="acerosX" required><br><br>
-
-        <label for="tipoaceroX">Tipo de Acero adicional en X (mm):</label>
-        <select id="tipoaceroX" name="tipoaceroX" required>
-            <option value="0.0127">0.0127 mm</option>
-            <option value="0.019039999999999998">0.01904 mm</option>
-            <option value="0.0254">0.0254 mm</option>
-            <option value="0.03174">0.03174 mm</option>
-            <option value="0.0381">0.0381 mm</option>
-            <option value="0.0508">0.0508 mm</option>
-        </select><br><br>
-
-        <label for="acerosy">Cantidad de Aceros en Y:</label>
-        <input type="number" id="acerosy" name="acerosy" required><br><br>
-
-        <label for="tipoaceroY">Tipo de Acero adicional en Y (mm):</label>
-        <select id="tipoaceroY" name="tipoaceroY" required>
-            <option value="0.0127">0.0127 mm</option>
-            <option value="0.019039999999999998">0.01904 mm</option>
-            <option value="0.0254">0.0254 mm</option>
-            <option value="0.03174">0.03174 mm</option>
-            <option value="0.0381">0.0381 mm</option>
-            <option value="0.0508">0.0508 mm</option>
-        </select><br><br>
+        <label for="cantidadPisos">Cantidad de Pisos:</label>
+        <input type="number" id="cantidadPisos" name="cantidadPisos" step="1" required><br><br>
 
         <input type="submit" value="Enviar">
     </form>
