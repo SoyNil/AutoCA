@@ -33,7 +33,7 @@ for ($i = 0; $i < $cantidadColumnas; $i++) {
     $numPisosAdicionales = (int)$_POST["cantidadPisos"];
 
     $contenido_dxf = "";
-    $contenido_dxf .= "0\nSTYLE\n2\nArialStyle\n3\narial.ttf\n70\n0\n40\n1.0\n41\n1.0\n50\n0\n71\n0\n42\n1.0\n";
+    $contenido_dxf .= "0\nSTYLE\n2\nArialStyle\n3\nVista/arial.ttf\n70\n0\n40\n1.0\n41\n1.0\n50\n0\n71\n0\n42\n1.0\n";
     
     $contenido_dxf = "0\nSECTION\n2\nENTITIES\n";
     $contenido_dxf .= "0\nPOLYLINE\n8\n0\n";
